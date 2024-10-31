@@ -1,0 +1,35 @@
+.content h1 {
+  font-size: 50px;
+  margin: 0 0 0 5%;
+  float: left;
+  justify-content: center;
+}
+.btn_add {
+  font-size: 50px;
+  float: right;
+  margin-right: 5%;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+}
+table {
+  width: 90%;
+  margin: 0 auto;
+}
+tr {
+  font-size: 30px;
+  height: 100px;
+}
+td {
+  text-align: center;
+}
+.sum {
+  font-size: 40px;
+}
+.income a {
+  color: red;
+}
+table, td, th {
+  border: 1px black solid;
+}

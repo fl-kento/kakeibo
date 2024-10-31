@@ -1,0 +1,27 @@
+.main {
+  display: flex;
+}
+.sidebar {
+  border-right:2px solid black ;
+  height: 100vh;
+  margin-right:20px ;
+  font-size: 40px;
+  width: 20%;
+}
+.username {
+  border-bottom:1px solid black ;
+}
+.username span {
+  font-size: 60px;
+}
+.sidebar_content {
+  border-bottom: 1px solid black;
+  margin: 30px 0;
+}
+.sidebar_content a {
+  text-decoration: none;
+  color: rgb(61, 75, 209);
+}
+.content {
+  width: 80%;
+}

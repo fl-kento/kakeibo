@@ -1,0 +1,25 @@
+.wrapper {
+  width:1000px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+.button {
+  margin-top:40px ;
+  border: 1px solid black;
+  padding:20px;
+  border-radius: 10px;
+}
+.register {
+  font-size: 30px;
+  text-decoration: none;
+  color: black;
+}
+.title {
+  font-size: 50px;
+}
+.content {
+  width: 80%;
+}

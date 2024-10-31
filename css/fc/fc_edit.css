@@ -1,0 +1,40 @@
+.title {
+  font-size: 60px;
+  display: flex;
+  justify-content: center;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+form p {
+  font-size: 40px;
+  width: 400px;
+  margin: 0;
+}
+select {
+  height: 40px;
+}
+input {
+  width: 180px;
+  height: 40px;
+}
+.decision {
+  display: flex;
+  justify-content: center;
+}
+.decision input {
+  margin-left: 20px;
+  font-size: 20px;
+}
+.now_value {
+  font-size: 20px;
+  color:rgba(0, 0, 0, 0.534);
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+.fixedcosts a {
+  color: red;
+}
