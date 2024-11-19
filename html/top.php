@@ -1,19 +1,25 @@
 <?php
-$error_message=[];
-if(!empty($_POST["login"])){
-  if(empty($_POST["name"])){
-    $error_message["name"]="ユーザ名を入力してください";
-  }elseif(mb_strlen($_POST["name"])>20){
-    $error_message["name"]="文字数がオーバーしています";
+$errorMessage = [];
+if (!empty($_POST["login"])) {
+  if (empty($_POST["name"])) {
+    $errorMessage["name"] = "ユーザ名を入力してください";
   }
-  if(empty($_POST["password"])){
-    $error_message["password"]="パスワードを入力してください";
-  }elseif(!preg_match(" /^[a-zA-Z0-9]+$/",$_POST["password"])){
-    $error_message["password"]="大文字、小文字、数値で入力してください";
+  elseif (mb_strlen($_POST["name"])>20) {
+    $errorMessage["name"] = "文字数がオーバーしています";
+  }
+  if (empty($_POST["password"])) {
+    $errorMessage["password"] = "パスワードを入力してください";
+  }
+  else {
+    if (!preg_match(" /^[a-zA-Z0-9]+$/",$_POST["password"])) {
+      $errorMessage["password"] = "大文字、小文字、数値で入力してください";
+    }
+    if (mb_strlen($_POST["password"])<10) {
+      $errorMessage["password"] = "10桁以上で入力してください";
+    }
   }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -29,19 +35,19 @@ if(!empty($_POST["login"])){
     <form action="top.php" method="post">
       <p>ユーザー名: <input type="text" name="name"></p>
       <p class="error">
-      <?php
-        if(!empty($error_message["name"])){
-            echo $error_message["name"];
-          }
-      ?>
+        <?php
+          if (!empty($errorMessage["name"])) {
+            echo $errorMessage["name"];
+          } 
+        ?>
       </p>
       <p>パスワード: <input type="password" name="password"></p>
       <p class="error">
-      <?php
-        if(!empty($error_message["password"])){
-            echo $error_message["password"];
+        <?php
+          if (!empty($errorMessage["password"])) {
+              echo $errorMessage["password"];
           }
-      ?>
+        ?>
       </p>
       <input type="submit" name="login" value="ログイン">
     </form>
