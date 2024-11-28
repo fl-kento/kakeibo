@@ -53,7 +53,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       <div class="table_box">
         <table>
         <?php 
-        foreach($content->fetchAll() as $result): 
+        foreach ($content->fetchAll() as $result): 
         ?>
           <tr>
             <td><?php echo $result['date']; ?></td>
