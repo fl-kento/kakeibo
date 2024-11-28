@@ -31,7 +31,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       $error_message['date'] = '日付を選んでください';
     }
     if (empty($error_message)) {
-      $add = $db->prepare('INSERT INTO expense VALUE(:number, :id, :kinds, :money, :date)');
+      $add = $db->prepare('INSERT INTO expense (expense_no, user_id, type_no, amount, date) VALUE (:number, :id, :kinds, :money, :date)');
       $add->bindParam(':number', $latest_no['expense_no'], PDO::PARAM_INT);
       $add->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
       $add->bindParam(':kinds', $_POST['kinds'], PDO::PARAM_INT);
