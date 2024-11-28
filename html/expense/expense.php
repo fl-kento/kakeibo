@@ -9,7 +9,7 @@ try {
 }
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
-  $content = $db->prepare('SELECT SUM(amount) AS 集計金額, name FROM expense INNER JOIN type ON expense.type_no = type.id WHERE user_id = :id GROUP BY type_no');
+  $content = $db->prepare('SELECT SUM(amount) AS 集計金額, name, type_no FROM expense INNER JOIN type ON expense.type_no = type.id WHERE user_id = :id GROUP BY type_no');
   $content->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
   $content->execute();
   $user = $db->prepare('SELECT name FROM user WHERE id = :id');
@@ -40,7 +40,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../../css/main.css">
   <link rel="stylesheet" href="../../css/expense/expense.css">
-  <title>Document</title>
+  <title>支出管理画面</title>
 </head>
 <body>
   <div class="main">
@@ -71,7 +71,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
           <tr>
             <td><?php echo $result['name']; ?></td>
             <td><?php echo $result['集計金額']; ?></td>
-            <td><a href="expense_check.php">編集・削除</a></td>          
+            <td><a href="expense_check.php?no=<?php print($result['type_no']); ?>">編集・削除</a></td>          
           </tr>
         <?php endforeach; ?> 
         </table>
