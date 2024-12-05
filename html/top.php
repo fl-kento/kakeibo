@@ -16,10 +16,10 @@ if (!empty($_POST['login'])) {
   if (empty($errorMessage)) {
     $login = $db->prepare('SELECT id, name, password FROM user WHERE name = :user_name AND password = :pass');
     $login->bindParam(':user_name', $_POST['name'], PDO::PARAM_INT);
-    $login->bindParam(':pass', $_POST['password'], PDO::PARAM_INT);
+    $login->bindParam(':pass', $_POST['password'], PDO::PARAM_STR);
     $login->execute();
     $member = $login->fetch();
-    if ($member > 0) {
+    if ($member) {
       $_SESSION['id'] = $member['id'];
       $_SESSION['time'] = time();
       header('Location: expense/expense.php');
