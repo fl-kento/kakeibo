@@ -1,7 +1,5 @@
 <?php 
 session_start();
-$_SESSION['id'] = '1'; //実際にはログイン時に取得
-$_SESSION['time'] = time(); //実際にはログイン時に取得
 try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {

@@ -1,7 +1,5 @@
 <?php
 session_start();
-$_SESSION['id'] = '1'; //実際にはログイン時に取得
-$_SESSION['time'] = time(); //実際にはログイン時に取得
 try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {
@@ -55,7 +53,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../../css/main.css">
   <link rel="stylesheet" href="../../css/expense/expense_add.css">
-  <title>Document</title>
+  <title>支出追加画面</title>
 </head>
 <body>
   <div class="main">
