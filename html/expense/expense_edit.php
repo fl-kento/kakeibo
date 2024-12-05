@@ -14,38 +14,23 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $user->execute();
   $user = $user->fetch(PDO::FETCH_ASSOC);
   $user_name = $user['name'];
-  $now_content = $db->prepare('SELECT name, amount, type_no, date FROM expense INNER JOIN type ON expense.type_no = type.id WHERE user_id = :id AND expense_no = :no');
+  $now_content = $db->prepare('SELECT amount, type_no, date FROM expense INNER JOIN type ON expense.type_no = type.id WHERE user_id = :id AND expense_no = :no');
   $now_content->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
   $now_content->bindParam(':no', $_REQUEST['no'], PDO::PARAM_INT);
   $now_content->execute();
   $now_content = $now_content->fetch(PDO::FETCH_ASSOC);
   if (!empty($_POST['edit'])) {
-    if ($_POST['kinds'] != '0') {
-      $kind = $_POST['kinds'];
-    } else {
-      $kind = $now_content['type_no'];
-    }
-    if (!empty($_POST['money'])) {
-      $money = $_POST['money'];
-    } else {
-      $money = $now_content['amount'];
-    }
-    if (!empty($_POST['date'])) {
-      $date = $_POST['date'];
-    } else {
-      $date = $now_content['date'];
-    }
     $edit = $db->prepare('UPDATE expense SET type_no = :type_no, amount = :money, date = :date WHERE user_id = :id AND expense_no = :expense_no');
     $edit->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
     $edit->bindParam(':expense_no', $_REQUEST['no'], PDO::PARAM_INT);
-    $edit->bindParam(':type_no', $kind, PDO::PARAM_INT);
-    $edit->bindParam(':money', $money, PDO::PARAM_INT);
-    $edit->bindParam(':date', $date, PDO::PARAM_STR);
+    $edit->bindParam(':type_no', $_POST['kinds'], PDO::PARAM_INT);
+    $edit->bindParam(':money', $_POST['money'], PDO::PARAM_INT);
+    $edit->bindParam(':date', $_POST['date'], PDO::PARAM_STR);
     $edit->execute();
     header('Location: expense.php');
     exit();
   } else {
-    $kind = $now_content['name'];
+    $kind = $now_content['type_no'];
     $money = $now_content['amount'];
     $date = $now_content['date'];
   }
@@ -86,23 +71,19 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     <div class="content">
       <h1 class="title">支出項目の編集・削除</h1>
       <form action="expense_edit.php?no=<?php print($_REQUEST['no']); ?>" method="post">
-        <p>種類: <select name="kinds">
-          <option value="0" selected>種類を選んでください</option>
-          <option value="1">食費</option>
-          <option value="2">日用品</option>
-          <option value="3">趣味</option>
-          <option value="4">交通</option>
-          <option value="5">教育</option>
-          <option value="6">医療費</option>
-          <option value="7">被服、美容</option>
-          <option value="8">交際費</option>
-          <option value="9">雑費</option>
+        <p>種類: <select name="kinds" class="item">
+          <option value="1" <?php if ($kind == "1") {echo "selected";} ?>>食費</option>
+          <option value="2" <?php if ($kind == "2") {echo "selected";} ?>>日用品</option>
+          <option value="3" <?php if ($kind == "3") {echo "selected";} ?>>趣味</option>
+          <option value="4" <?php if ($kind == "4") {echo "selected";} ?>>交通</option>
+          <option value="5" <?php if ($kind == "5") {echo "selected";} ?>>教育</option>
+          <option value="6" <?php if ($kind == "6") {echo "selected";} ?>>医療費</option>
+          <option value="7" <?php if ($kind == "7") {echo "selected";} ?>>被服、美容</option>
+          <option value="8" <?php if ($kind == "8") {echo "selected";} ?>>交際費</option>
+          <option value="9" <?php if ($kind == "9") {echo "selected";} ?>>雑費</option>
         </select></p>
-        <p class="now_value">現在の種類:<?php echo $kind; ?></p>
-        <p>金額: <input type="text" name="money"> 円</p>
-        <p class="now_value">現在の金額:<?php echo $money; ?>円</p>
-        <p>日付: <input type="date" name="date"></p>
-        <p class="now_value">現在の日付:<?php echo $date; ?></p>
+        <p class="item">金額: <input type="text" name="money" value="<?php echo $money; ?>"> 円</p>
+        <p class="item">日付: <input type="date" name="date" value="<?php echo $date; ?>"></p>
         <p class="decision">
           <input type="submit" name="edit" value="編集">
           <input type="submit" name="delete" value="削除">
