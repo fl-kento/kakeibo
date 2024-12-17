@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<head>
   <meta charset="UTF-8">
   <meta name="keywords" content="家計簿アプリ,使いやすい,household account book">
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../css/top.css">
   <title>登録完了</title>
-</head>
 </head>
 <body>
   <div class="wrapper">
