@@ -68,7 +68,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time() && $flag) {
 <body>
   <div class="main">
     <div class="sidebar">
-      <div class="sidebar_content"><span class="username"><?php  echo $user_name; ?></span>さん</div>
+      <div class="sidebar_content"><span class="username"><?php echo $user_name; ?></span>さん</div>
       <div class="sidebar_content expense"><a href="expense.php">支出管理</a></div>
       <div class="sidebar_content"><a href="../income/income.php">収入管理</a></div>
       <div class="sidebar_content"><a href="../fc/fc.php">固定費管理</a></div>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 $flag = True;
 try {
@@ -36,7 +36,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time() && $flag) {
   <meta name="keywords" content="家計簿アプリ,使いやすい,household account book">
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../../css/main.css">
-  <link rel="stylesheet" href="../../css/expense/expense_check.css">
+  <link rel="stylesheet" href="../../css/expense_check.css">
   <title>支出詳細画面</title>
 </head>
 <body>
