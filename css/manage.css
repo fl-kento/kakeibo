@@ -1,11 +1,19 @@
 .content h1 {
-  font-size: 50px;
-  margin: 0 0 0 5%;
-  float: left;
+  font-size: 2em;
+  margin-left: 5%;
   justify-content: center;
 }
+.table_box {
+  overflow-y: auto;
+  height: 50vh;
+  width: 100%;
+}
+.sum {
+  margin-left: 5%;
+  font-size: 2em;
+}
 .btn_add {
-  font-size: 50px;
+  font-size: 2.5em;
   float: right;
   margin-right: 5%;
   border: 2px solid rgb(0, 0, 0);
@@ -24,12 +32,17 @@ tr {
 td {
   text-align: center;
 }
-.sum {
-  font-size: 40px;
-}
-.expence a {
-  color: red;
-}
 table, td, th {
   border: 1px #000000 solid;
+}
+.latest_expense {
+  border: #000000 solid 2px;
+  margin-left: 5%;
+  font-size: 20px;
+  padding: 10px;
+  width:fit-content;
+}
+form h3 {
+  color: red;
+  margin-left: 5%;
 }

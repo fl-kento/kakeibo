@@ -10,7 +10,7 @@
   margin-top:40px ;
   border: 1px solid black;
   padding:20px;
-  border-radius: 10px;
+  border-radius: 50px;
 }
 .register {
   font-size: 30px;
@@ -22,4 +22,7 @@
 }
 .content {
   width: 80%;
+}
+.error {
+  color: red;
 }

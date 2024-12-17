@@ -11,6 +11,7 @@ form {
 form p {
   font-size: 40px;
   width: 400px;
+  margin: 0;
 }
 select {
   height: 40px;
@@ -18,14 +19,19 @@ select {
 input {
   width: 180px;
   height: 40px;
+  font-size: 20px;
 }
 .decision {
   display: flex;
   justify-content: center;
 }
 .decision input {
+  margin-left: 20px;
   font-size: 20px;
 }
-.expence a {
+.item {
+  margin-bottom: 40px;
+}
+form h3 {
   color: red;
 }

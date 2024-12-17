@@ -4,15 +4,15 @@
 .sidebar {
   border-right:2px solid black ;
   height: 100vh;
-  margin-right:20px ;
-  font-size: 40px;
+  font-size: 200%;
   width: 20%;
 }
-.username {
-  border-bottom:1px solid black ;
+.title {
+  font-size: 80%;
 }
-.username span {
-  font-size: 60px;
+.username {
+  font-size: 130%;
+  overflow-wrap: break-word;
 }
 .sidebar_content {
   border-bottom: 1px solid black;
@@ -24,4 +24,30 @@
 }
 .content {
   width: 80%;
+  height: 100vh;
+}
+.select_month {
+  font-size: 40px;
+  width: 60px;
+}
+.select_year {
+  font-size: 40px;
+  width: 120px;
+}
+.change_month {
+  margin-left:10px;
+  font-size: 20px;
+}
+.expense a {
+  color: red;
+}
+.income a {
+  color: red;
+}
+.fixedcosts a {
+  color: red;
+}
+a {
+  text-decoration: none;
+  color: rgb(35, 100, 221);
 }
