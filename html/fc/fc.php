@@ -1,11 +1,13 @@
 <?php 
 session_start();
+$flag = True;
 try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {
   echo 'DB接続エラー:' . $e->getMessage();
+  $flag = False;
 }
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time() && $flag) {
   $_SESSION['time'] = time();
   $content = $db->prepare('SELECT content, amount, payment_date, fixed_no FROM fixed WHERE user_id = :id');
   $content->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);

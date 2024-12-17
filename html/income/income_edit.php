@@ -1,11 +1,13 @@
-<?php
+<?php 
 session_start();
+$flag = True;
 try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {
   echo 'DB接続エラー:' . $e->getMessage();
+  $flag = False;
 }
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time() && $flag) {
   $_SESSION['time'] = time();
   $user = $db->prepare('SELECT name FROM user WHERE id = :id');
   $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
@@ -24,18 +26,18 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   if (!empty($_POST['edit'])) {
     if (empty($_POST['content'])) {
       $error_message['content'] = '内容を入力してください';
+    } elseif (mb_strlen($_POST['content']) > 20) {
+      $error_message['length'] = "内容が長すぎます";
     }
     if (empty($_POST['money'])) {
       $error_message['money'] = '金額を入力してください';
+    } elseif (strlen($_POST['money']) > 6) {
+      $error_message['big'] = "金額が大きすぎます";
+    } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
+      $error_message['int'] = "金額は半角数字で入力してください";
     }
     if (empty($_POST['date'])) {
       $error_message['date'] = '日付を選んでください';
-    }
-    if (strlen($_POST['money']) > 6) {
-      $error_message['big'] = "金額が大きすぎます";
-    }
-    if (mb_strlen($_POST['content']) > 16) {
-      $error_message['length'] = "内容が長すぎます";
     }
     if (empty($error_message)) {
       $edit = $db->prepare('UPDATE income SET content = :content, amount = :money, date = :date WHERE user_id = :id AND income_no = :no');
@@ -48,8 +50,6 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       header('Location: income.php');
       exit();
     }
-  } else {
-
   }
   if (!empty($_POST['delete'])) {
     $delete = $db->prepare('DELETE FROM income WHERE user_id = :id AND income_no = :no');
@@ -76,7 +76,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
 </head>
 <body>
   <div class="main">
-  <div class="sidebar">
+    <div class="sidebar">
       <div class="sidebar_content"><span class="username"><?php echo $user_name; ?></span>さん</div>
       <div class="sidebar_content"><a href="../expense/expense.php">支出管理</a></div>
       <div class="sidebar_content income"><a href="income.php">収入管理</a></div>

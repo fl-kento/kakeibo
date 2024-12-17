@@ -1,11 +1,13 @@
-<?php
+<?php 
 session_start();
+$flag = True;
 try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {
   echo 'DB接続エラー:' . $e->getMessage();
+  $flag = False;
 }
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time() && $flag) {
   $_SESSION['time'] = time();
   $user = $db->prepare('SELECT name FROM user WHERE id = :id');
   $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
@@ -27,14 +29,15 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     }
     if (empty($_POST['money'])) {
       $error_message['money'] = '金額を入力してください';
-    }
+    } elseif (strlen($_POST['money']) > 6) {
+      $error_message['big'] = "金額が大きすぎます";
+    } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
+      $error_message['int'] = "金額は半角数字で入力してください";
+    } 
     if (empty($_POST['date'])) {
-      $error_message['date'] = '支払日を入力してください';
+      $error_message['payment_date'] = '支払日を入力してください';
     } elseif (1 > $_POST['date'] or $_POST['date'] > 31) {
       $error_message['Incorrect_format'] = "正しい日にちを入力してください";
-    }
-    if (strlen($_POST['money']) > 6) {
-      $error_message['big'] = "金額が大きすぎます";
     }
     if (mb_strlen($_POST['content']) > 20) {
       $error_message['length'] = "内容が長すぎます";
