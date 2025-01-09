@@ -2,6 +2,7 @@
   font-size: 60px;
   display: flex;
   justify-content: center;
+  margin: 2.5% 0;
 }
 form {
   display: flex;
@@ -11,7 +12,7 @@ form {
 form p {
   font-size: 40px;
   width: 400px;
-  margin: 0;
+  margin: 2.5%;
 }
 select {
   height: 40px;
@@ -28,9 +29,6 @@ input {
 .decision input {
   margin-left: 20px;
   font-size: 20px;
-}
-.item {
-  margin-bottom: 40px;
 }
 form h3 {
   color: red;

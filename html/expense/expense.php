@@ -63,6 +63,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../../css/main.css">
   <link rel="stylesheet" href="../../css/manage.css">
+  <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css"/>
   <title>支出管理画面</title>
 </head>
 <body>
@@ -94,7 +95,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         if (empty($sum_result['合計金額'])) {
           echo '0';
         } else {
-          echo $sum_result['合計金額']; 
+          echo number_format($sum_result['合計金額']);
         }
       ?>円</p>
       <div class="table_box">
@@ -104,7 +105,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         ?>
           <tr>
             <td><?php echo $result['name']; ?></td>
-            <td><?php echo $result['集計金額']; ?></td>
+            <td><?php echo number_format($result['集計金額']); ?></td>
             <td><a href="expense_check.php?no=<?php echo $result['type_no']; ?>&month=<?php echo $month; ?>&year=<?php echo $year; ?>">編集・削除</a></td>          
           </tr>
         <?php endforeach; ?> 
@@ -114,7 +115,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         if (empty($latest_expense['name'])) {
           echo 'なし';
         } else {
-          echo $latest_expense['name'] . ' : ' . $latest_expense['amount'] . '円'; 
+          echo $latest_expense['name'] . ' : ' . number_format($latest_expense['amount']) . '円'; 
         }
       ?></p> 
     </div>

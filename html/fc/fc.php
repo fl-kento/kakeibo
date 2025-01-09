@@ -34,6 +34,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../../css/main.css">
   <link rel="stylesheet" href="../../css/manage.css">
+  <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css"/>
   <title>固定費管理画面</title>
 </head>
 <body>
@@ -48,11 +49,11 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       </div>
     </div>
     <div class="content">
-      <h1>合計金額:<?php
+      <h1 class="sum">合計金額:<?php
         if (empty($sum_result['合計金額'])) {
           echo '0';
         } else {
-          echo $sum_result['合計金額']; 
+          echo number_format($sum_result['合計金額']); 
         }
       ?>円</h1>
       <a class="btn_add" href="fc_add.php">固定費の追加</a>
@@ -67,7 +68,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
           <?php foreach ($content->fetchAll() as $result): ?>
           <tr>
             <td><?php echo $result['content']; ?></td>
-            <td><?php echo $result['amount']; ?> 円</td>
+            <td><?php echo number_format($result['amount']); ?> 円</td>
             <td><?php echo $result['payment_date']; ?> 日</td>
             <td><a href="fc_edit.php?no=<?php print($result['fixed_no']); ?>">編集・削除</a></td>          
           </tr>

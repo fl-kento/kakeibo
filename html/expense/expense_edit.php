@@ -7,6 +7,7 @@ try {
   header('Location: ../top.php');
   exit();
 }
+$error_message = [];
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
   $user = $db->prepare('SELECT name FROM user WHERE id = :id');
@@ -19,6 +20,9 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $now_content->bindParam(':no', $_REQUEST['no'], PDO::PARAM_INT);
   $now_content->execute();
   $now_content = $now_content->fetch(PDO::FETCH_ASSOC);
+  $kind = $now_content['type_no'];
+  $money = $now_content['amount'];
+  $date = $now_content['date'];
   if (!empty($_POST['edit'])) {
     if (empty($_POST['kinds'])) {
       $error_message['kinds'] = '種類を選んでください';
@@ -44,10 +48,6 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       header('Location: expense.php');
       exit();
     }
-  } else {
-    $kind = $now_content['type_no'];
-    $money = $now_content['amount'];
-    $date = $now_content['date'];
   }
   if (!empty($_POST['delete'])) {
     $delete = $db->prepare('DELETE FROM expense WHERE user_id = :id AND expense_no = :expense_no');
@@ -59,7 +59,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   }
 } else {
   header('Location: ../top.php');
-  exit();  
+  exit();
 }
 ?>
 <!DOCTYPE html>
@@ -86,6 +86,11 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     <div class="content">
       <h1 class="title">支出項目の編集・削除</h1>
       <form action="expense_edit.php?no=<?php print($_REQUEST['no']); ?>" method="post">
+        <h3><?php
+          foreach ($error_message as $message) {
+            echo $message . '<br>';
+          } 
+        ?></h3>
         <p>種類: <select name="kinds" class="item">
           <option value="1" <?php if ($kind == "1") {echo "selected";} ?>>食費</option>
           <option value="2" <?php if ($kind == "2") {echo "selected";} ?>>日用品</option>

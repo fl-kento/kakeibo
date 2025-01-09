@@ -80,6 +80,11 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     <div class="content">
       <h1 class="title">支払い内容の追加</h1>
       <form action="expense_add.php" method="post">
+        <h3><?php
+          foreach ($error_message as $message) {
+            echo $message . '<br>';
+          } 
+        ?></h3>
         <p>種類: <select name="kinds">
           <option value="">種類を選んでください</option>
           <option value="1">食費</option>
@@ -94,11 +99,6 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         </select></p>
         <p>金額: <input type="text" name="money"> 円</p>
         <p>日付: <input type="date" name="date" value="<?php echo date("Y-m-d"); ?>"></p>
-        <h3><?php
-          foreach ($error_message as $message) {
-            echo $message . '<br>';
-          } 
-        ?></h3>
         <p class="decision"><input type="submit" name="add" value="追加"></p>
       </form>
     </div>
