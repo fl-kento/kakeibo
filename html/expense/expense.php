@@ -1,14 +1,14 @@
-<?php 
+<?php
 session_start();
-$flag = True;
 try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {
   echo 'DB接続エラー:' . $e->getMessage();
-  $flag = False;
+  header('Location: ../top.php');
+  exit();
 }
 $error_message = [];
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time() && $flag) {
+if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
   if (!empty($_POST['change'])) {
     if (empty($_POST['month']) || empty($_POST['year'])) {
