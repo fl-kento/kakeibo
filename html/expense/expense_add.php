@@ -4,7 +4,10 @@ try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {
   echo 'DB接続エラー:' . $e->getMessage();
+  header('Location: ../top.php');
+  exit();
 }
+$error_message = [];
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
   $user = $db->prepare('SELECT name FROM user WHERE id = :id');
@@ -16,7 +19,11 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $latest_no->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
   $latest_no->execute();
   $latest_no = $latest_no->fetch(PDO::FETCH_ASSOC);
-  $latest_no['expense_no'] += 1;
+  if (empty($latest_no['expense_no'])) {
+    $latest_no['expense_no'] = 1;
+  } else {
+    $latest_no['expense_no'] += 1;
+  }
   $error_message = [];
   if (!empty($_POST['add'])) {
     if (empty($_POST['kinds'])) {
@@ -24,6 +31,10 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     }
     if (empty($_POST['money'])) {
       $error_message['money'] = '金額を入力してください';
+    } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
+      $error_message['int'] = "金額は半角数字で入力してください";
+    } elseif (strlen($_POST['money']) > 6) {
+      $error_message['big'] = "金額が大きすぎます";
     }
     if (empty($_POST['date'])) {
       $error_message['date'] = '日付を選んでください';
@@ -52,7 +63,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   <meta name="keywords" content="家計簿アプリ,使いやすい,household account book">
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../../css/main.css">
-  <link rel="stylesheet" href="../../css/expense/expense_add.css">
+  <link rel="stylesheet" href="../../css/add.css">
   <title>支出追加画面</title>
 </head>
 <body>
@@ -60,8 +71,8 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     <div class="sidebar">
       <div class="sidebar_content"><span class="username"><?php echo $user_name; ?></span>さん</div>
       <div class="sidebar_content expense"><a href="expense.php">支出管理</a></div>
-      <div class="sidebar_content income"><a href="../income/income.php">収入管理</a></div>
-      <div class="sidebar_content fixedcosts"><a href="../fc/fc.php">固定費管理</a></div>
+      <div class="sidebar_content"><a href="../income/income.php">収入管理</a></div>
+      <div class="sidebar_content"><a href="../fc/fc.php">固定費管理</a></div>
       <div class="sidebar_content logout">
         <a href="../../logout.php">ログアウト</a>
       </div>
@@ -82,7 +93,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
           <option value="9">雑費</option>
         </select></p>
         <p>金額: <input type="text" name="money"> 円</p>
-        <p>日付: <input type="date" name="date"></p>
+        <p>日付: <input type="date" name="date" value="<?php echo date("Y-m-d"); ?>"></p>
         <h3><?php
           foreach ($error_message as $message) {
             echo $message . '<br>';

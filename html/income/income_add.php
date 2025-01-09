@@ -4,6 +4,8 @@ try {
   $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
 } catch (PDOException $e) {
   echo 'DB接続エラー:' . $e->getMessage();
+  header('Location: ../top.php');
+  exit();
 }
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
@@ -25,18 +27,18 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   if (!empty($_POST['add'])) {
     if (empty($_POST['content'])) {
       $error_message['content'] = '内容を入力してください';
+    } elseif (mb_strlen($_POST['content']) > 20) {
+      $error_message['length'] = "内容が長すぎます";
     }
     if (empty($_POST['money'])) {
       $error_message['money'] = '金額を入力してください';
+    } elseif (strlen($_POST['money']) > 6) {
+      $error_message['big'] = "金額が大きすぎます";
+    } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
+      $error_message['int'] = "金額は半角数字で入力してください";
     }
     if (empty($_POST['date'])) {
       $error_message['date'] = '日付を選んでください';
-    }
-    if (strlen($_POST['money']) > 6) {
-      $error_message['big'] = "金額が大きすぎます";
-    }
-    if (mb_strlen($_POST['content']) > 16) {
-      $error_message['length'] = "内容が長すぎます";
     }
     if (empty($error_message)) {
       $add = $db->prepare('INSERT INTO income (income_no, user_id, content, amount, date) VALUE (:number, :id, :content, :money, :date)');

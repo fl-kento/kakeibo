@@ -13,10 +13,16 @@ tr {
 td {
   text-align: center;
 }
-.expence a {
+.expense a {
   color: red;
 }
 table, td, th {
   border: 1px black solid;
+}
+.table_box {
+  margin-top: 10px;
+  overflow-y: auto;
+  height: 75vh;
+  width: 100%;
 }
   
