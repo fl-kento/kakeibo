@@ -59,7 +59,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         ?>
           <tr>
             <td><?php echo $result['date']; ?></td>
-            <td><?php echo $result['amount']; ?></td>
+            <td><?php echo number_format($result['amount']); ?></td>
             <td><a href="expense_edit.php?no=<?php print($result['expense_no']); ?>">編集・削除</a></td>          
           </tr>
         <?php endforeach; ?> 
