@@ -1,32 +1,17 @@
 <?php
+require_once('CheckValidation.php');
 session_start();
 $error_message = [];
-try {
-  $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-  $error_message['db'] = "データベースに接続できていません"; 
-}
+$login = new CheckValidation();
 if (!empty($_POST['login'])) {
-  if (empty($_POST['name'])) {
-    $error_message['name'] = 'ユーザ名を入力してください';
-  }
-  if (empty($_POST['password'])) {
-    $error_message['password'] = 'パスワードを入力してください';
-  }
-  if (empty($error_message)) {
-    $login = $db->prepare('SELECT id, name, password FROM user WHERE name = :user_name AND password = :pass');
-    $login->bindParam(':user_name', $_POST['name'], PDO::PARAM_INT);
-    $login->bindParam(':pass', $_POST['password'], PDO::PARAM_STR);
-    $login->execute();
-    $member = $login->fetch();
-    if ($member) {
-      $_SESSION['id'] = $member['id'];
-      $_SESSION['time'] = time();
-      header('Location: expense/expense.php');
-      exit();
-    } else {
-      $error_message['login'] = 'ユーザ名かパスワードが異なっています';
-    }
+  $login->check($_POST, 'login');
+  if (!empty($login->error_message)) {
+    $error_message = $login->error_message;
+  } else {
+    $_SESSION['id'] = $login->user_id;
+    $_SESSION['time'] = time();
+    header('Location: expense/expense.php');
+    exit();
   }
 }
 ?>
