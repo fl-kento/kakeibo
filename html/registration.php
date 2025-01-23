@@ -1,20 +1,17 @@
 <?php
 require_once('UserManager.php');
-session_start();
 $error_message = [];
-$login = new UserManager();
 $text_value_name = '';
 $text_value_password = '';
-if (!empty($_POST['login'])) {
-  $result = $login->loginUser($_POST);
-  if (is_array($result)) {
+$register = new UserManager();
+if (!empty($_POST['register'])) {
+  $result = $register->registUser($_POST);
+  if ($result) {
     $error_message = $result;
     $text_value_name = $_POST['name'];
     $text_value_password = $_POST['password'];
   } else {
-    $_SESSION['id'] = $result;
-    $_SESSION['time'] = time();
-    header('Location: expense/expense.php');
+    header('Location: completed.php');
     exit();
   }
 }
@@ -26,20 +23,12 @@ if (!empty($_POST['login'])) {
   <meta name="keywords" content="家計簿アプリ,使いやすい,household account book">
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../css/top.css">
-  <title>ログイン画面</title>
+  <title>新規登録画面</title>
 </head>
 <body>
-  <div class="wrapper">
-    <h1 class="title">家計簿アプリ</h1>
-    <p class="error"><?php
-      if (!empty($error_message['login'])) {
-        echo $error_message['login'];
-      } 
-      if (!empty($error_message['db'])) {
-        echo $error_message['db'];
-      } 
-    ?></p>
-    <form action="top.php" method="post">
+  <div class="wrapper">  
+    <h1 class="title">新規登録</h1>
+    <form action="registration.php" method="post">
       <p>ユーザー名: <input type="text" name="name" value="<?php echo $text_value_name ?>"></p>
       <p class="error"><?php
         if (!empty($error_message['name'])) {
@@ -50,11 +39,11 @@ if (!empty($_POST['login'])) {
       <p class="error"><?php
         if (!empty($error_message['password'])) {
           echo $error_message['password'];
-        }
+        } 
       ?></p>
-      <input type="submit" name="login" value="ログイン">
+      <p class="decision"><input type="submit" name="register" value="新規登録"></p>
     </form>
-    <div class="button"><a href="registration.php" class="register">新規登録</a></div>
+    <div class="button"><a href="top.php" class="register">トップ画面に戻る</a></div>
   </div>
 </body>
 </html>
