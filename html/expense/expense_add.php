@@ -1,52 +1,16 @@
 <?php
+require_once('../UserManager.php');
+require_once('ExpenseManager.php');
 session_start();
-try {
-  $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-  echo 'DB接続エラー:' . $e->getMessage();
-  header('Location: ../top.php');
-  exit();
-}
 $error_message = [];
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
-  $user = $db->prepare('SELECT name FROM user WHERE id = :id');
-  $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $user->execute();
-  $user = $user->fetch(PDO::FETCH_ASSOC);
-  $user_name = $user['name'];
-  $latest_no = $db->prepare('SELECT expense_no FROM expense WHERE user_id = :id ORDER BY expense_no DESC LIMIT 1');
-  $latest_no->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $latest_no->execute();
-  $latest_no = $latest_no->fetch(PDO::FETCH_ASSOC);
-  if (empty($latest_no['expense_no'])) {
-    $latest_no['expense_no'] = 1;
-  } else {
-    $latest_no['expense_no'] += 1;
-  }
-  $error_message = [];
+  $user_manager = new UserManager();
+  $user_name = $user_manager->displayUser($_SESSION['id']);
+  $expense_manager = new ExpenseManager();
   if (!empty($_POST['add'])) {
-    if (empty($_POST['kinds'])) {
-      $error_message['kinds'] = '種類を選んでください';
-    }
-    if (empty($_POST['money'])) {
-      $error_message['money'] = '金額を入力してください';
-    } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
-      $error_message['int'] = "金額は半角数字で入力してください";
-    } elseif (strlen($_POST['money']) > 6) {
-      $error_message['big'] = "金額が大きすぎます";
-    }
-    if (empty($_POST['date'])) {
-      $error_message['date'] = '日付を選んでください';
-    }
+    $error_message = $expense_manager->addExpense();
     if (empty($error_message)) {
-      $add = $db->prepare('INSERT INTO expense (expense_no, user_id, type_no, amount, date) VALUE (:number, :id, :kinds, :money, :date)');
-      $add->bindParam(':number', $latest_no['expense_no'], PDO::PARAM_INT);
-      $add->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-      $add->bindParam(':kinds', $_POST['kinds'], PDO::PARAM_INT);
-      $add->bindParam(':money', $_POST['money'], PDO::PARAM_INT);    
-      $add->bindParam(':date', $_POST['date'], PDO::PARAM_STR);    
-      $add->execute();
       header('Location: expense.php');
       exit();
     }

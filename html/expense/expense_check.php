@@ -1,29 +1,18 @@
 <?php
+require_once('../UserManager.php');
+require_once('ExpenseManager.php');
 session_start();
-try {
-  $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-  echo 'DB接続エラー:' . $e->getMessage();
-  header('Location: ../top.php');
-  exit();
-}
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
-  $user = $db->prepare('SELECT name FROM user WHERE id = :id');
-  $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $user->execute();
-  $user = $user->fetch(PDO::FETCH_ASSOC);
-  $user_name = $user['name'];
-  $content = $db->prepare('SELECT amount, date, expense_no FROM expense INNER JOIN type ON expense.type_no = type.id WHERE user_id = :id AND type_no = :no AND month(date) = :month AND year(date) = :year ORDER BY date DESC');
-  $content->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $content->bindParam(':no', $_REQUEST['no'], PDO::PARAM_INT);
-  $content->bindParam(':month', $_REQUEST['month'], PDO::PARAM_INT);
-  $content->bindParam(':year', $_REQUEST['year'], PDO::PARAM_INT);
-  $content->execute();
-  $title = $db->prepare('SELECT name FROM expense INNER JOIN type ON expense.type_no = type.id WHERE type_no = :no');
-  $title->bindParam(':no', $_REQUEST['no'], PDO::PARAM_INT);
-  $title->execute();
-  $title = $title->fetch(PDO::FETCH_ASSOC);
+  $user_manager = new UserManager();
+  $user_name = $user_manager->displayUser($_SESSION['id']);
+  $expense_manager = new ExpenseManager();
+  list($content, $title) = $expense_manager->displayExpenseDetail($_REQUEST['month'], $_REQUEST['year']);
+  if (!empty($_POST['delete'])) {
+    $expense_manager->deleteExpense();
+    header('Location: expense.php');
+    exit();
+  }
 } else {
   header('Location: ../top.php');
   exit();
@@ -55,12 +44,13 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       <div class="table_box">
         <table>
         <?php 
-        foreach ($content->fetchAll() as $result): 
+        foreach ($content as $result): 
         ?>
           <tr>
             <td><?php echo $result['date']; ?></td>
             <td><?php echo number_format($result['amount']); ?></td>
-            <td><a href="expense_edit.php?no=<?php print($result['expense_no']); ?>">編集・削除</a></td>          
+            <td><a href="expense_edit.php?no=<?php print($result['expense_no']); ?>">編集</a></td> 
+            <td><form action="expense_check.php?no=<?php print($result['expense_no']); ?>" method="post"><input type="submit" value = "削除" name = "delete"></form></td>         
           </tr>
         <?php endforeach; ?> 
         </table>
