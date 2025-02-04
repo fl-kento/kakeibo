@@ -1,60 +1,25 @@
 <?php
+require_once('../UserManager.php');
+require_once('FcManager.php');
 session_start();
-try {
-  $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-  echo 'DB接続エラー:' . $e->getMessage();
-  header('Location: ../top.php');
-  exit();
-}
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
-  $user = $db->prepare('SELECT name FROM user WHERE id = :id');
-  $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $user->execute();
-  $user = $user->fetch(PDO::FETCH_ASSOC);
-  $user_name = $user['name'];
-  $latest_no = $db->prepare('SELECT fixed_no FROM fixed WHERE user_id = :id ORDER BY fixed_no DESC LIMIT 1');
-  $latest_no->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $latest_no->execute();
-  $latest_no = $latest_no->fetch(PDO::FETCH_ASSOC);
-  if (empty($latest_no['fixed_no'])) {
-    $latest_no['fixed_no'] = 1;
-  } else {
-    $latest_no['fixed_no'] += 1;
-  }
+  $text_value_content = '';
+  $text_value_amount = '';
+  $text_value_date = date("Y-m-d");
+  $user_manager = new UserManager();
+  $user_name = $user_manager->getName($_SESSION['id']);
   $error_message = [];
+  $fix_manager = new FcManager();
   if (!empty($_POST['add'])) {
-    if (empty($_POST['content'])) {
-      $error_message['content'] = '内容を入力してください';
-    }
-    if (empty($_POST['money'])) {
-      $error_message['money'] = '金額を入力してください';
-    } else {
-      if (strlen($_POST['money']) > 6) {
-        $error_message['big'] = "金額が大きすぎます";
-      } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
-        $error_message['int'] = "金額は半角数字で入力してください";
-      }
-    } 
-    if (empty($_POST['payment_date'])) {
-      $error_message['payment_date'] = '支払日を入力してください';
-    } elseif (1 > $_POST['payment_date'] or $_POST['payment_date'] > 31) {
-      $error_message['Incorrect_format'] = "正しい日にちを入力してください";
-    }
-    if (mb_strlen($_POST['content']) > 20) {
-      $error_message['length'] = "内容が長すぎます";
-    }
+    $error_message = $fix_manager->addFixContent();
     if (empty($error_message)) {
-      $add = $db->prepare('INSERT INTO fixed (fixed_no, user_id, content, amount, payment_date) VALUE (:number, :id, :content, :money, :payment_date)');
-      $add->bindParam(':number', $latest_no['fixed_no'], PDO::PARAM_INT);
-      $add->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-      $add->bindParam(':content', $_POST['content'], PDO::PARAM_STR);
-      $add->bindParam(':money', $_POST['money'], PDO::PARAM_INT);    
-      $add->bindParam(':payment_date', $_POST['payment_date'], PDO::PARAM_INT);    
-      $add->execute();
       header('Location: fc.php');
       exit();
+    } else {
+      $text_value_content = $_POST['content'];
+      $text_value_amount = $_POST['money'];
+      $text_value_date = $_POST['payment_date'];
     }
   }
 } else {
@@ -91,9 +56,9 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
           echo $message . '<br>';
         } 
       ?></h3>
-        <p>内容: <input type="text" name="content"></p>
-        <p>金額: <input type="text" name="money"> 円</p>
-        <p>支払日: <input type="number" name="payment_date" value="<?php echo date('j'); ?>"></p>
+        <p>内容: <input type="text" name="content" value="<?php echo $text_value_content; ?>"></p>
+        <p>金額: <input type="text" name="money" value="<?php echo $text_value_amount; ?>"> 円</p>
+        <p>支払日: <input type="number" name="payment_date" value="<?php echo $text_value_date; ?>"></p>
         <p class="decision"><input type="submit" name="add" value="追加"></p>
       </form>
     </div>
