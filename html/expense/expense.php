@@ -12,9 +12,9 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     list($month, $year, $error_message) = $date_manager->displayDate($_POST['month'], $_POST['year']);
   }
   $user_manager = new UserManager();
-  $user_name = $user_manager->displayUser($_SESSION['id']);
+  $user_name = $user_manager->getName($_SESSION['id']);
   $expense_manager = new ExpenseManager();
-  list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->displayExpense($month, $year);
+  list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->getExpense($month, $year);
 } else {
   header('Location: ../top.php');
   exit();

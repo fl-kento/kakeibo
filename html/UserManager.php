@@ -23,7 +23,7 @@ class UserManager {
       return $validator->user_id;
     }
   }
-  public function displayUser($user_id) {
+  public function getName($user_id) {
     $db = new Database();
     $sql = 'SELECT name FROM user WHERE id = :id';
     $params = [':id' => $user_id];

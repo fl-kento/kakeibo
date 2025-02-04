@@ -1,26 +1,13 @@
 <?php
+require_once('FcManager.php');
+require_once('../UserManager.php');
 session_start();
-try {
-  $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-  echo 'DB接続エラー:' . $e->getMessage();
-  header('Location: ../top.php');
-  exit();
-}
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
-  $content = $db->prepare('SELECT content, amount, payment_date, fixed_no FROM fixed WHERE user_id = :id');
-  $content->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $content->execute();
-  $user = $db->prepare('SELECT name FROM user WHERE id = :id');
-  $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $user->execute();
-  $user = $user->fetch(PDO::FETCH_ASSOC);
-  $user_name = $user['name'];
-  $sum = $db->prepare('SELECT SUM(amount) AS 合計金額 FROM fixed WHERE user_id = :id');
-  $sum->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $sum->execute();
-  $sum_result = $sum->fetch(PDO::FETCH_ASSOC);
+  $user_manager = new UserManager();
+  $user_name = $user_manager->getName($_SESSION['id']);
+  $fix_manager = new FcManager();
+  list($content, $total_amount) = $fix_manager->getFixContent($_SESSION['id']);
 } else {
   header('Location: ../top.php');
   exit();
@@ -50,10 +37,10 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     </div>
     <div class="content">
       <h1 class="sum">合計金額:<?php
-        if (empty($sum_result['合計金額'])) {
+        if (empty($total_amount['合計金額'])) {
           echo '0';
         } else {
-          echo number_format($sum_result['合計金額']); 
+          echo number_format($total_amount['合計金額']); 
         }
       ?>円</h1>
       <a class="btn_add" href="fc_add.php">固定費の追加</a>
@@ -65,7 +52,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
             <th>支払日</th>
             <th>編集・削除</th>
           </tr>
-          <?php foreach ($content->fetchAll() as $result): ?>
+          <?php foreach ($content as $result): ?>
           <tr>
             <td><?php echo $result['content']; ?></td>
             <td><?php echo number_format($result['amount']); ?> 円</td>

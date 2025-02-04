@@ -1,55 +1,25 @@
 <?php
+require_once('../UserManager.php');
+require_once('IncomeManager.php');
 session_start();
-try {
-  $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-  echo 'DB接続エラー:' . $e->getMessage();
-  header('Location: ../top.php');
-  exit();
-}
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
-  $user = $db->prepare('SELECT name FROM user WHERE id = :id');
-  $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $user->execute();
-  $user = $user->fetch(PDO::FETCH_ASSOC);
-  $user_name = $user['name'];
-  $latest_no = $db->prepare('SELECT income_no FROM income WHERE user_id = :id ORDER BY income_no DESC LIMIT 1');
-  $latest_no->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $latest_no->execute();
-  $latest_no = $latest_no->fetch(PDO::FETCH_ASSOC);
-  if (empty($latest_no['income_no'])) {
-    $latest_no['income_no'] = 1;
-  } else {
-    $latest_no['income_no'] += 1;
-  }
+  $text_value_content = '';
+  $text_value_amount = '';
+  $text_value_date = date("Y-m-d");
+  $user_manager = new UserManager();
+  $user_name = $user_manager->getName($_SESSION['id']);
   $error_message = [];
+  $income_manager = new IncomeManager();
   if (!empty($_POST['add'])) {
-    if (empty($_POST['content'])) {
-      $error_message['content'] = '内容を入力してください';
-    } elseif (mb_strlen($_POST['content']) > 20) {
-      $error_message['length'] = "内容が長すぎます";
-    }
-    if (empty($_POST['money'])) {
-      $error_message['money'] = '金額を入力してください';
-    } elseif (strlen($_POST['money']) > 6) {
-      $error_message['big'] = "金額が大きすぎます";
-    } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
-      $error_message['int'] = "金額は半角数字で入力してください";
-    }
-    if (empty($_POST['date'])) {
-      $error_message['date'] = '日付を選んでください';
-    }
+    $error_message = $income_manager->addIncome();
     if (empty($error_message)) {
-      $add = $db->prepare('INSERT INTO income (income_no, user_id, content, amount, date) VALUE (:number, :id, :content, :money, :date)');
-      $add->bindParam(':number', $latest_no['income_no'], PDO::PARAM_INT);
-      $add->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-      $add->bindParam(':content', $_POST['content'], PDO::PARAM_STR);
-      $add->bindParam(':money', $_POST['money'], PDO::PARAM_INT);    
-      $add->bindParam(':date', $_POST['date'], PDO::PARAM_STR);    
-      $add->execute();
       header('Location: income.php');
       exit();
+    } else {
+      $text_value_content = $_POST['content'];
+      $text_value_amount = $_POST['money'];
+      $text_value_date = $_POST['date'];
     }
   }
 } else {
@@ -86,9 +56,9 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
             echo $message . '<br>';
           } 
         ?></h3>
-        <p>内容: <input type="text" name="content"></p>
-        <p>金額: <input type="text" name="money"> 円</p>
-        <p>日付: <input type="date" name="date" value="<?php echo date("Y-m-d"); ?>"></p>
+        <p>内容: <input type="text" name="content" value="<?php echo $text_value_content; ?>"></p>
+        <p>金額: <input type="text" name="money" value="<?php echo $text_value_amount; ?>"> 円</p>
+        <p>日付: <input type="date" name="date" value="<?php echo $text_value_date; ?>"></p>
         <p class="decision"><input type="submit" name="add" value="追加"></p>
       </form>
     </div>

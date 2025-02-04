@@ -6,9 +6,9 @@ $error_message = [];
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
   $user_manager = new UserManager();
-  $user_name = $user_manager->displayUser($_SESSION['id']);
+  $user_name = $user_manager->getName($_SESSION['id']);
   $expense_manager = new ExpenseManager();
-  $now_content = $expense_manager->displayNowContent();
+  $now_content = $expense_manager->getNowContent();
   $kind = $now_content['type_no'];
   $money = $now_content['amount'];
   $date = $now_content['date'];
