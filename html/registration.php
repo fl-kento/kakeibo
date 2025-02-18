@@ -3,9 +3,9 @@ require_once('UserManager.php');
 $error_message = [];
 $text_value_name = '';
 $text_value_password = '';
-$register = new UserManager();
+$user_manager = new UserManager();
 if (!empty($_POST['register'])) {
-  $result = $register->registUser($_POST);
+  $result = $user_manager->registUser($_POST);
   if ($result) {
     $error_message = $result;
     $text_value_name = $_POST['name'];
@@ -29,13 +29,13 @@ if (!empty($_POST['register'])) {
   <div class="wrapper">  
     <h1 class="title">新規登録</h1>
     <form action="registration.php" method="post">
-      <p>ユーザー名: <input type="text" name="name" value="<?php echo $text_value_name ?>"></p>
+      <p>ユーザー名: <input type="text" name="name" value="<?php echo $text_value_name; ?>"></p>
       <p class="error"><?php
         if (!empty($error_message['name'])) {
           echo $error_message['name'];
         } 
       ?></p>
-      <p>パスワード: <input type="password" name="password" value="<?php echo $text_value_password ?>"></p>
+      <p>パスワード: <input type="password" name="password" value="<?php echo $text_value_password; ?>"></p>
       <p class="error"><?php
         if (!empty($error_message['password'])) {
           echo $error_message['password'];

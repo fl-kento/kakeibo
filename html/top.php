@@ -2,11 +2,11 @@
 require_once('UserManager.php');
 session_start();
 $error_message = [];
-$login = new UserManager();
+$user_manager = new UserManager();
 $text_value_name = '';
 $text_value_password = '';
 if (!empty($_POST['login'])) {
-  $result = $login->loginUser($_POST);
+  $result = $user_manager->loginUser($_POST);
   if (is_array($result)) {
     $error_message = $result;
     $text_value_name = $_POST['name'];

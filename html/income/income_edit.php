@@ -1,63 +1,23 @@
 <?php
+require_once('incomeManager.php');
+require_once('../UserManager.php');
 session_start();
-try {
-  $db = new PDO('mysql:dbname=money_management;host=127.0.0.1;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-  echo 'DB接続エラー:' . $e->getMessage();
-  header('Location: ../top.php');
-  exit();
-}
 if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   $_SESSION['time'] = time();
-  $user = $db->prepare('SELECT name FROM user WHERE id = :id');
-  $user->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $user->execute();
-  $user = $user->fetch(PDO::FETCH_ASSOC);
-  $user_name = $user['name'];
-  $now_content = $db->prepare('SELECT content, amount, date FROM income WHERE user_id = :id AND income_no = :no');
-  $now_content->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-  $now_content->bindParam(':no', $_REQUEST['no'], PDO::PARAM_INT);
-  $now_content->execute();
-  $now_content = $now_content->fetch(PDO::FETCH_ASSOC);
-  $error_message = [];
+  $user_manager = new UserManager();
+  $user_name = $user_manager->getName($_SESSION['id']);
+  $income_manager = new IncomeManager();
+  $now_content = $income_manager->getNowContent();
   $content = $now_content['content'];
   $money = $now_content['amount'];
   $date = $now_content['date'];
+  $error_message = [];
   if (!empty($_POST['edit'])) {
-    if (empty($_POST['content'])) {
-      $error_message['content'] = '内容を入力してください';
-    } elseif (mb_strlen($_POST['content']) > 20) {
-      $error_message['length'] = "内容が長すぎます";
-    }
-    if (empty($_POST['money'])) {
-      $error_message['money'] = '金額を入力してください';
-    } elseif (strlen($_POST['money']) > 6) {
-      $error_message['big'] = "金額が大きすぎます";
-    } elseif (!preg_match(' /^[0-9]+$/', $_POST['money'])) {
-      $error_message['int'] = "金額は半角数字で入力してください";
-    }
-    if (empty($_POST['date'])) {
-      $error_message['date'] = '日付を選んでください';
-    }
+    $error_message = $income_manager->editIncome();
     if (empty($error_message)) {
-      $edit = $db->prepare('UPDATE income SET content = :content, amount = :money, date = :date WHERE user_id = :id AND income_no = :no');
-      $edit->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-      $edit->bindParam(':no', $_REQUEST['no'], PDO::PARAM_INT);
-      $edit->bindParam(':content', $_POST['content'], PDO::PARAM_STR);
-      $edit->bindParam(':money', $_POST['money'], PDO::PARAM_INT);
-      $edit->bindParam(':date', $_POST['date'], PDO::PARAM_STR);
-      $edit->execute();
       header('Location: income.php');
       exit();
     }
-  }
-  if (!empty($_POST['delete'])) {
-    $delete = $db->prepare('DELETE FROM income WHERE user_id = :id AND income_no = :no');
-    $delete->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-    $delete->bindParam(':no', $_REQUEST['no'], PDO::PARAM_INT);
-    $delete->execute();
-    header('Location: income.php');
-    exit();
   }
 } else {
   header('Location: ../top.php');

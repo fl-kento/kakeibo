@@ -39,22 +39,3 @@ class Database {
   }
 }
 ?>
-
-<!--
-$dsn = 'mysql:host=localhost;dbname=sample;charset=utf8';
-$username = 'root';
-$password = '';
-
-$$db = new Database($dsn, $username, $password);
-
-$userid = $_SESSION['id'];
-$month = date('Y-m');
-$year = date('Y');
-
-$sql = 'SELECT SUM(amount) AS 集計金額, name, type_no FROM expense INNER JOIN type ON expense.type_no = type.id WHERE user_id = :id AND month(date) = :month AND year(date) = :year GROUP BY type_no';
-$params = [':id' => $userid, ':month' => $month, ':year' => $year];
-$result = $db->query($sql, $params);
-foreach ($result as $row) {
-  echo $row['name'] . ':' . $row['集計金額'] . '円<br>';
-}
-?> -->
