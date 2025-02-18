@@ -10,7 +10,11 @@
   height: 100vh;
   font-size: 200%;
   width: 20%;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
+.side
 .title {
   font-size: 80%;
 }
@@ -20,23 +24,32 @@
 }
 .sidebar_content {
   border-bottom: 1px solid black;
-  margin: 30px 0;
+  padding: 20px;
 }
 .sidebar_content a {
   text-decoration: none;
   color: rgb(61, 75, 209);
+  display: block;
+}
+.logout {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid black;
+  width: 100%;
 }
 .content {
   width: 80%;
   height: 100vh;
+  margin-left: 20%;
 }
 .select_month {
   font-size: 40px;
-  width: 60px;
+  width: 80px;
 }
 .select_year {
   font-size: 40px;
-  width: 120px;
+  width: 130px;
 }
 .change_month {
   margin-left:10px;

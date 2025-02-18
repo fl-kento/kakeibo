@@ -2,26 +2,21 @@
 require_once('../UserManager.php');
 require_once("FcManager.php");
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $fix_manager = new FcManager();
-  $now_content = $fix_manager->getNowContent();
-  $content = $now_content['content'];
-  $money = $now_content['amount'];
-  $date = $now_content['payment_date'];
-  $error_message = [];
-  if (!empty($_POST['edit'])) {
-    $error_message = $fix_manager->editFixContent();
-    if (empty($error_message)) {
-      header('Location: fc.php');
-      exit();
-    }
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$user_name = $user_manager->getName($_SESSION['id']);
+$fix_manager = new FcManager();
+$now_content = $fix_manager->getNowContent();
+$content = $now_content['content'];
+$money = $now_content['amount'];
+$date = $now_content['payment_date'];
+$error_message = [];
+if (!empty($_POST['edit'])) {
+  $error_message = $fix_manager->editFixContent();
+  if (empty($error_message)) {
+    header('Location: fc.php');
+    exit();
   }
-} else {
-  header('Location: ../top.php');
-  exit();  
 }
 ?>
 <!DOCTYPE html>

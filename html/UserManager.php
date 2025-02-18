@@ -3,6 +3,14 @@ require_once('Validator.php');
 require_once('Register.php');
 require_once('Database.php');
 class UserManager {
+  public function checkLogin() {
+    if (!isset($_SESSION['id']) || $_SESSION['time'] + 3600 < time()) {
+      header('Location: ../top.php');
+      exit();
+    } else {
+      $_SESSION['time'] = time();
+    }
+  }
   public function registUser($post_content) {
     $validator = new Validator();
     $validator->checkUser($post_content['name'], $post_content['password'], 'register'); 

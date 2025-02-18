@@ -2,16 +2,11 @@
 require_once('FcManager.php');
 require_once('../UserManager.php');
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $fix_manager = new FcManager();
-  list($content, $total_amount) = $fix_manager->getFixContent($_SESSION['id']);
-} else {
-  header('Location: ../top.php');
-  exit();
-}
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$user_name = $user_manager->getName($_SESSION['id']);
+$fix_manager = new FcManager();
+list($content, $total_amount) = $fix_manager->getFixContent($_SESSION['id']);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
