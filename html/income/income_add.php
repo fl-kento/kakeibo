@@ -2,30 +2,26 @@
 require_once('../UserManager.php');
 require_once('IncomeManager.php');
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $text_value_content = '';
-  $text_value_amount = '';
-  $text_value_date = date("Y-m-d");
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $error_message = [];
-  $income_manager = new IncomeManager();
-  if (!empty($_POST['add'])) {
-    $error_message = $income_manager->addIncome();
-    if (empty($error_message)) {
-      header('Location: income.php');
-      exit();
-    } else {
-      $text_value_content = $_POST['content'];
-      $text_value_amount = $_POST['money'];
-      $text_value_date = $_POST['date'];
-    }
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$text_value_content = '';
+$text_value_amount = '';
+$text_value_date = date("Y-m-d");
+$user_name = $user_manager->getName($_SESSION['id']);
+$error_message = [];
+$income_manager = new IncomeManager();
+if (!empty($_POST['add'])) {
+  $error_message = $income_manager->addIncome();
+  if (empty($error_message)) {
+    header('Location: income.php');
+    exit();
+  } else {
+    $text_value_content = $_POST['content'];
+    $text_value_amount = $_POST['money'];
+    $text_value_date = $_POST['date'];
   }
-} else {
-  header('Location: ../top.php');
-  exit();
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -44,7 +40,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       <div class="sidebar_content"><a href="../expense/expense.php">支出管理</a></div>
       <div class="sidebar_content income"><a href="income.php">収入管理</a></div>
       <div class="sidebar_content"><a href="../fc/fc.php">固定費管理</a></div>
-      <div class="sidebar_content">
+      <div class="sidebar_content logout">
         <a href="../../logout.php">ログアウト</a>
       </div>
     </div>

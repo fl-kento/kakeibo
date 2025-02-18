@@ -3,22 +3,17 @@ require_once('IncomeManager.php');
 require_once('../UserManager.php');
 require_once('../DateManager.php');
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $month = date('m');
-  $year = date('Y');
-  if (!empty($_POST['change'])) {
-    $date_manager = new DateManager();
-    list($month, $year, $error_message) = $date_manager->displayDate($_POST['month'], $_POST['year']);
-  }
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $income_manager = new IncomeManager();
-  list($content, $total_amount) = $income_manager->getIncome($month, $year);
-} else {
-  header('Location: ../top.php');
-  exit();
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$month = date('m');
+$year = date('Y');
+if (!empty($_POST['change'])) {
+  $date_manager = new DateManager();
+  list($month, $year, $error_message) = $date_manager->displayDate($_POST['month'], $_POST['year']);
 }
+$user_name = $user_manager->getName($_SESSION['id']);
+$income_manager = new IncomeManager();
+list($content, $total_amount) = $income_manager->getIncome($month, $year);
 ?>
 <!DOCTYPE html>
 <html lang="ja">

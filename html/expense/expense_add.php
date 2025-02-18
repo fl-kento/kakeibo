@@ -4,28 +4,26 @@ require_once('ExpenseManager.php');
 session_start();
 $kind = '';
 $text_value_amount = '';
+$text_value_content = '';
 $text_value_date = date("Y-m-d");
 $error_message = [];
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $expense_manager = new ExpenseManager();
-  if (!empty($_POST['add'])) {
-    $error_message = $expense_manager->addExpense();
-    if (empty($error_message)) {
-      header('Location: expense.php');
-      exit();
-    } else {
-      $kind = $_POST['kinds'];
-      $text_value_amount = $_POST['money'];
-      $text_value_date = $_POST['date'];
-    }
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$user_name = $user_manager->getName($_SESSION['id']);
+$expense_manager = new ExpenseManager();
+if (!empty($_POST['add'])) {
+  $error_message = $expense_manager->addExpense();
+  if (empty($error_message)) {
+    header('Location: expense.php');
+    exit();
+  } else {
+    $kind = $_POST['kinds'];
+    $text_value_amount = $_POST['money'];
+    $text_value_date = $_POST['date'];
+    $text_value_content = $_POST['content'];
   }
-} else {
-  header('Location: ../top.php');
-  exit();
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -71,6 +69,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         </select></p>
         <p>金額: <input type="text" name="money" value = "<?php echo $text_value_amount; ?>"> 円</p>
         <p>日付: <input type="date" name="date" value="<?php echo $text_value_date; ?>"></p>
+        <p>内容: <input type="text" name="content" value="<?php echo $text_value_content; ?>"></p>
         <p class="decision"><input type="submit" name="add" value="追加"></p>
       </form>
     </div>

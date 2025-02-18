@@ -2,19 +2,14 @@
 require_once('../UserManager.php');
 require_once('ExpenseManager.php');
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $user_manager = new UserManager();
-  $user_name = $user_manager->displayUser($_SESSION['id']);
-  $expense_manager = new ExpenseManager();
-  list($content, $title) = $expense_manager->displayExpenseDetail($_REQUEST['month'], $_REQUEST['year']);
-  if (!empty($_POST['delete'])) {
-    $expense_manager->deleteExpense();
-    header('Location: expense.php');
-    exit();
-  }
-} else {
-  header('Location: ../top.php');
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$user_name = $user_manager->getName($_SESSION['id']);
+$expense_manager = new ExpenseManager();
+list($contents, $title) = $expense_manager->getExpenseDetail($_REQUEST['month'], $_REQUEST['year']);
+if (!empty($_POST['delete'])) {
+  $expense_manager->deleteExpense();
+  header('Location: expense.php');
   exit();
 }
 ?>
@@ -26,10 +21,11 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
   <meta name="description" content="家計簿アプリです">
   <link rel="stylesheet" href="../../css/main.css">
   <link rel="stylesheet" href="../../css/expense_check.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <title>支出詳細画面</title>
 </head>
 <body>
-<div class="main">
+  <div class="main">
     <div class="sidebar">
       <div class="sidebar_content"><span class="username"><?php echo $user_name; ?></span>さん</div>
       <div class="sidebar_content expense"><a href="expense.php">支出管理</a></div>
@@ -39,23 +35,37 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         <a href="../../logout.php">ログアウト</a>
       </div>
     </div>
-    <div class="content">
-      <h1><?php echo $title['name']; ?> 履歴</h1>
-      <div class="table_box">
-        <table>
+  <div class="content">
+    <h1><?php echo $title['name']; ?> 履歴</h1>
+    <div class="item_list">
+      <?php $date = ''; ?>
+      <div class="item">    
+        <?php foreach ($contents as $value): ?>
+        <?php if ($date != date('n月j日', strtotime($value['date']))): ?>
         <?php 
-        foreach ($content as $result): 
+          $date = date('n月j日', strtotime($value['date'])); 
+          $sum_amount = $expense_manager->getSumDailyAmount($value['date']);
         ?>
-          <tr>
-            <td><?php echo $result['date']; ?></td>
-            <td><?php echo number_format($result['amount']); ?></td>
-            <td><a href="expense_edit.php?no=<?php print($result['expense_no']); ?>">編集</a></td> 
-            <td><form action="expense_check.php?no=<?php print($result['expense_no']); ?>" method="post"><input type="submit" value = "削除" name = "delete"></form></td>         
-          </tr>
-        <?php endforeach; ?> 
-        </table>
+        <div class="date_amount">
+          <div class="date"><?php echo $date; ?></div>
+          <div class="amount">合計: ¥<?php echo number_format($sum_amount['合計金額']); ?></div>
+        </div>
+        <?php endif; ?>
+        <div class="item_detail">
+          <div class="main_content">
+            <div class="matter"><?php echo $value['content']; ?></div>
+            <div class="money">¥<?php echo number_format($value['amount']); ?></div>
+          </div>
+          <div class="select">
+            <a href="expense_edit.php?no=<?php echo $value['expense_no']; ?>"><span class="material-icons">edit</span></a>
+            <form action="expense_check.php?no=<?php echo $value['expense_no']; ?>" method="post">
+              <input type="submit" name="delete" value="削除">
+            </form>
+          </div>
+        </div>
+        <?php endforeach; ?>
       </div>
     </div>
-  </div>
+  </div> 
 </body>
 </html>

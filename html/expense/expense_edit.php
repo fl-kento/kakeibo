@@ -3,26 +3,23 @@ require_once('ExpenseManager.php');
 require_once('../UserManager.php');
 session_start();
 $error_message = [];
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $expense_manager = new ExpenseManager();
-  $now_content = $expense_manager->getNowContent();
-  $kind = $now_content['type_no'];
-  $money = $now_content['amount'];
-  $date = $now_content['date'];
-  if (!empty($_POST['edit'])) {
-    $error_message = $expense_manager->editExpense();
-    if (empty($error_message)) {
-      header('Location: expense.php');
-      exit();
-    }
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$user_name = $user_manager->getName($_SESSION['id']);
+$expense_manager = new ExpenseManager();
+$now_content = $expense_manager->getNowContent();
+$kind = $now_content['type_no'];
+$money = $now_content['amount'];
+$date = $now_content['date'];
+$content = $now_content['content'];
+if (!empty($_POST['edit'])) {
+  $error_message = $expense_manager->editExpense();
+  if (empty($error_message)) {
+    header('Location: expense.php');
+    exit();
   }
-} else {
-  header('Location: ../top.php');
-  exit();
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -66,10 +63,12 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         </select></p>
         <p class="item">金額: <input type="text" name="money" value="<?php echo $money; ?>"> 円</p>
         <p class="item">日付: <input type="date" name="date" value="<?php echo $date; ?>"></p>
+        <p class="item">内容: <input type="text" name="content" value="<?php echo $content; ?>"></p>
         <p class="decision">
           <input type="submit" name="edit" value="更新">
         </p>
-      </form>
+        <a class="back" href="expense_check.php?no=<?php echo $now_content['type_no']; ?>&month=<?php echo date('n', strtotime($date)); ?>&year=<?php echo date('Y', strtotime($date)); ?>">戻る</a>
+      </form>     
     </div>
   </div>
 </body>

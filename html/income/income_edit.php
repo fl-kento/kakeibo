@@ -2,26 +2,21 @@
 require_once('incomeManager.php');
 require_once('../UserManager.php');
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $income_manager = new IncomeManager();
-  $now_content = $income_manager->getNowContent();
-  $content = $now_content['content'];
-  $money = $now_content['amount'];
-  $date = $now_content['date'];
-  $error_message = [];
-  if (!empty($_POST['edit'])) {
-    $error_message = $income_manager->editIncome();
-    if (empty($error_message)) {
-      header('Location: income.php');
-      exit();
-    }
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$user_name = $user_manager->getName($_SESSION['id']);
+$income_manager = new IncomeManager();
+$now_content = $income_manager->getNowContent();
+$content = $now_content['content'];
+$money = $now_content['amount'];
+$date = $now_content['date'];
+$error_message = [];
+if (!empty($_POST['edit'])) {
+  $error_message = $income_manager->editIncome();
+  if (empty($error_message)) {
+    header('Location: income.php');
+    exit();
   }
-} else {
-  header('Location: ../top.php');
-  exit();  
 }
 ?>
 <!DOCTYPE html>
