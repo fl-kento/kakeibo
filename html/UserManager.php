@@ -1,26 +1,26 @@
 <?php
-require_once('Validator.php');
+require_once('AbstractValidator.php');
+require_once('UserRegistrationValidator.php');
+require_once('UserLoginValidator.php');
 require_once('Register.php');
 require_once('Database.php');
 class UserManager {
   public function registUser($post_content) {
-    $validator = new Validator();
-    $validator->checkUser($post_content['name'], $post_content['password'], 'register'); 
-    if ($validator->error_message) {
-      return $validator->error_message;
-    } else {
+    $user_registration_validator = new UserRegistrationValidator();
+    if ($user_registration_validator->validate($post_content)) {
       $register = new Register();
       $register->regist($post_content['name'], $post_content['password']);
       return 0;
+    } else {
+      return $user_registration_validator->getErrorMessages();
     }
   }
   public function loginUser($post_content) {
-    $validator = new Validator();
-    $validator->checkUser($post_content['name'], $post_content['password'], 'login');
-    if ($validator->error_message) {
-      return $validator->error_message;
+    $user_login_validator = new UserLoginValidator();
+    if ($user_login_validator->validate($post_content)) {
+      return $user_login_validator->user_id;
     } else {
-      return $validator->user_id;
+      return $user_login_validator->getErrorMessages();
     }
   }
   public function getName($user_id) {
