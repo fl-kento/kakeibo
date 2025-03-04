@@ -2,29 +2,24 @@
 require_once('../UserManager.php');
 require_once('FcManager.php');
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $text_value_content = '';
-  $text_value_amount = '';
-  $text_value_date = date("Y-m-d");
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $error_message = [];
-  $fix_manager = new FcManager();
-  if (!empty($_POST['add'])) {
-    $error_message = $fix_manager->addFixContent();
-    if (empty($error_message)) {
-      header('Location: fc.php');
-      exit();
-    } else {
-      $text_value_content = $_POST['content'];
-      $text_value_amount = $_POST['money'];
-      $text_value_date = $_POST['payment_date'];
-    }
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$text_value_content = '';
+$text_value_amount = '';
+$text_value_date = date("Y-m-d");
+$user_name = $user_manager->getName($_SESSION['id']);
+$error_message = [];
+$fix_manager = new FcManager();
+if (!empty($_POST['add'])) {
+  $error_message = $fix_manager->addFixContent();
+  if (empty($error_message)) {
+    header('Location: fc.php');
+    exit();
+  } else {
+    $text_value_content = $_POST['content'];
+    $text_value_amount = $_POST['money'];
+    $text_value_date = $_POST['payment_date'];
   }
-} else {
-  header('Location: ../top.php');
-  exit();
 }
 ?>
 <!DOCTYPE html>

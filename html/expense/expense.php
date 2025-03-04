@@ -3,22 +3,18 @@ require_once('ExpenseManager.php');
 require_once('../UserManager.php');
 require_once('../DateManager.php');
 session_start();
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-  $_SESSION['time'] = time();
-  $month = date('m');
-  $year = date('Y');
-  if (!empty($_POST['change'])) {
-    $date_manager = new DateManager();
-    list($month, $year, $error_message) = $date_manager->displayDate($_POST['month'], $_POST['year']);
-  }
-  $user_manager = new UserManager();
-  $user_name = $user_manager->getName($_SESSION['id']);
-  $expense_manager = new ExpenseManager();
-  list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->getExpense($month, $year);
-} else {
-  header('Location: ../top.php');
-  exit();
+$user_manager = new UserManager();
+$user_manager->checkLogin();
+$month = date('m');
+$year = date('Y');
+if (!empty($_POST['change'])) {
+  $date_manager = new DateManager();
+  list($month, $year, $error_message) = $date_manager->displayDate($_POST['month'], $_POST['year']);
 }
+$user_manager = new UserManager();
+$user_name = $user_manager->getName($_SESSION['id']);
+$expense_manager = new ExpenseManager();
+list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->getExpense($month, $year);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -41,6 +37,7 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
       <div class="sidebar_content logout">
         <a href="../../logout.php">ログアウト</a>
       </div>
+      <div class="sidebar_content"><a href="../category_add.php">カテゴリー管理</a></div>
     </div>
     <div class="content">
       <form action="expense.php" method="post">

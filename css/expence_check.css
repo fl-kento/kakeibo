@@ -2,27 +2,45 @@ h1 {
   font-size: 50px;
   margin: 0 0 0 5%;
 }
-table {
-  width: 90%;
-  margin: 0 auto;
-}
-tr {
-  font-size: 30px;
+.item_detail {
+  width: 60%;
   height: 100px;
-}
-td {
-  text-align: center;
-}
-.expense a {
-  color: red;
-}
-table, td, th {
-  border: 1px black solid;
-}
-.table_box {
+  margin-left: 20%;
   margin-top: 10px;
-  overflow-y: auto;
-  height: 75vh;
-  width: 100%;
+  border: 2px solid rgb(37, 72, 168);
+  border-radius: 25px;
+  display: flex;
 }
-  
+.date_amount {
+  display: flex;
+  margin-left: 5%;
+  font-size: 30px;
+  margin-top: 20px;
+}
+.date {
+  background-color: rgb(59, 100, 161);
+  color: white;
+  border-radius: 25px;
+  padding: 5px;
+}
+.amount {
+  padding: 5px;
+}
+.matter {
+  font-size: 30px;
+}
+.money {
+  font-size: 30px;
+}
+.main_content{
+  display: flex;
+  flex-flow: column;
+}
+
+.material-icons {
+  border: solid;
+  border-radius: 50%;
+}
+.select {
+  justify-content: center;
+}
