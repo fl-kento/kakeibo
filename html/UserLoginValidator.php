@@ -12,7 +12,7 @@ class UserLoginValidator extends AbstractValidator {
       $this->error_messages['password'] = 'パスワードを入力してください';
       $this->is_valid = False;
     }
-    if (empty($this->error_message)) {
+    if ($this->is_valid) {
       $sql = 'SELECT id, name, password FROM user WHERE name = :user_name AND password = :pass';
       $params = [':user_name' => $name, ':pass' => $password];
       $result = $this->db->fetch($sql, $params);
