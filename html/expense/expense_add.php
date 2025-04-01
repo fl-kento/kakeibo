@@ -54,18 +54,18 @@ if (!empty($_POST['add'])) {
             echo $message . '<br>';
           } 
         ?></h3>
-        <p>種類: <select name="kinds">
-          <option value="">種類を選んでください</option>
-          <option value="1" <?php if ($kind == "1") {echo "selected";} ?>>食費</option>
-          <option value="2" <?php if ($kind == "2") {echo "selected";} ?>>日用品</option>
-          <option value="3" <?php if ($kind == "3") {echo "selected";} ?>>趣味</option>
-          <option value="4" <?php if ($kind == "4") {echo "selected";} ?>>交通</option>
-          <option value="5" <?php if ($kind == "5") {echo "selected";} ?>>教育</option>
-          <option value="6" <?php if ($kind == "6") {echo "selected";} ?>>医療費</option>
-          <option value="7" <?php if ($kind == "7") {echo "selected";} ?>>被服、美容</option>
-          <option value="8" <?php if ($kind == "8") {echo "selected";} ?>>交際費</option>
-          <option value="9" <?php if ($kind == "9") {echo "selected";} ?>>雑費</option>
-          <option value="10" <?php if ($kind == "10") {echo "selected";} ?>>カスタム</option>
+        <p>カテゴリー: <select name="kinds">
+          <option value="">カテゴリーを選んでください</option>
+          <?php
+          $expense_type = $expense_manager->getType();
+          foreach ($expense_type as $type) {
+            echo '<option value="' . $type['id'] . '"';
+            if ($kind == $type['id']) {
+              echo 'selected';
+            }
+            echo '>' . $type['name'] . '</option>';
+          }
+          ?>
         </select></p>
         <p>金額: <input type="text" name="money" value = "<?php echo $text_value_amount; ?>"> 円</p>
         <p>日付: <input type="date" name="date" value="<?php echo $text_value_date; ?>"></p>

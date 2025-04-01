@@ -15,6 +15,8 @@ $user_manager = new UserManager();
 $user_name = $user_manager->getName($_SESSION['id']);
 $expense_manager = new ExpenseManager();
 list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->getExpense($month, $year);
+$data = $summarize_amount;
+$jsonData = json_encode($data);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -26,6 +28,8 @@ list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->getE
   <link rel="stylesheet" href="../../css/manage.css">
   <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css"/>
   <title>支出管理画面</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="main">
@@ -34,10 +38,10 @@ list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->getE
       <div class="sidebar_content expense"><a href="expense.php">支出管理</a></div>
       <div class="sidebar_content"><a href="../income/income.php">収入管理</a></div>
       <div class="sidebar_content"><a href="../fc/fc.php">固定費管理</a></div>
+      <div class="sidebar_content"><a href="../category/category_edit.php">カテゴリー管理</a></div>
       <div class="sidebar_content logout">
         <a href="../../logout.php">ログアウト</a>
       </div>
-      <div class="sidebar_content"><a href="../category_add.php">カテゴリー管理</a></div>
     </div>
     <div class="content">
       <form action="expense.php" method="post">
@@ -73,6 +77,37 @@ list($summarize_amount, $total_amount, $latest_expense) = $expense_manager->getE
         <?php endforeach; ?> 
         </table>
       </div>
+
+      <canvas id="expenseChart"></canvas>
+      <script>
+        // PHP から JSON データを取得
+        const data = <?php echo $jsonData; ?>;
+        
+        const labels = data.map(item => item.name);
+        const amounts = data.map(item => item.集計金額);
+
+        function getColorForCategory(name) {
+          let hash = 0;
+          for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          const hue = Math.abs(hash) % 360; // 0〜360 の範囲に収める
+          return `hsl(${hue}, 70%, 60%)`; // 明るめの色を生成
+        }
+        const backgroundColor = labels.map(name => getColorForCategory(name));
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: amounts,
+              backgroundColor: backgroundColor
+            }]
+          }
+        });
+      </script>
+
       <p class="latest_expense">直近の支出 <?php
         if (empty($latest_expense['name'])) {
           echo 'なし';
