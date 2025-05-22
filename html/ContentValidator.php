@@ -16,6 +16,9 @@ class ContentValidator extends AbstractValidator {
      } elseif (2027 < $post_data['date'] || $post_data['date'] < 2024) {
       $this->error_messages['date'] = '2024~2026年で入力してください';
     }
+    if (!empty($this->error_messages)) {
+      $this->is_valid = False;
+    }
     return $this->is_valid;
   }
 }
